@@ -21,6 +21,9 @@
 				<option>
 					USA
 				</option>
+				<option>
+					Tokyo
+				</option>
 			</select>
 		</div>
 
@@ -47,28 +50,52 @@
 		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 		<script type="text/javascript">
-			var save_favorite_number_url = "http://localhost:9090/favorite_number"
+			var regions = {
+				Asia: "http://localhost:9090",
+				Europe: "http://localhost:9091",
+				USA: "http://localhost:9092",
+				Tokyo: "http://localhost:9093",
+			}
+
+			var save_favorite_number_url = "/favorite_number"
 
 			var save_btn = document.getElementById("save_btn")
+			var select_region = document.getElementById("select_region")
 
 			save_btn.addEventListener('click', function(e) {
 				e.preventDefault();
 
-				var select_region = document.getElementById("select_region")
 				var favorite_number = document.getElementById("favorite_number")
 
 				axios({
-					url: save_favorite_number_url,
+					url: regions[select_region.value] + save_favorite_number_url,
 					method: "post",
 					data: {
-						region: select_region.value,
-						favorite_number: favorite_number.value
+						number: Number(favorite_number.value)
 					}
 				}).then(function(response) {
 					console.log(response.data)
 				})
 				.catch(function(error) {
 					alert(error.response.data)
+				})
+			})
+
+			var get_favorite_number = document.getElementById("get_favorite_number")
+			var get_favorite_number_url = "/favorite_number"
+			var available_favorite_number = document.getElementById("available_favorite_number")
+
+			get_favorite_number.addEventListener('click', function(e) {
+				e.preventDefault();
+
+				axios({
+					url: regions[select_region.value] + get_favorite_number_url,
+					method: "get"
+				}).then(function(response) {
+					available_favorite_number.innerHTML = response.data
+				}).catch(function(error) {
+					console.log("Something went wrong")
+					alert(error.message)
 				})
 			})
 		</script>
